@@ -1,6 +1,21 @@
 import React from "react";
-
 class ClassComponent extends React.Component<{ name: string }> {
+  constructor(props: any) {
+    super(props);
+  }
+
+  componentDidMount() {
+    console.log("Component did mount");
+  }
+
+  componentDidUpdate() {
+    console.log("Component did update");
+  }
+
+  componentWillUnmount() {
+    console.log("Component will unmount");
+  }
+
   state = {
     name: "Mundo!!!",
   };
