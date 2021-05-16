@@ -1,4 +1,6 @@
-import Button from "../Button";
+import "bootstrap/dist/css/bootstrap.min.css";
+import Container from "../../shared/Container";
+import AppButton from "../AppButton";
 import Header from "../Header";
 import "./App.css";
 
@@ -17,14 +19,9 @@ function App() {
   return (
     <div className="App">
       <Header title="Algastock"></Header>
-      <div className="Container">
-        <Button
-          onClick={() => {
-            window.alert("event captured");
-          }}
-          appendIcon={<TestComponent />}
-        ></Button>
-      </div>
+      <Container>
+        <AppButton></AppButton>
+      </Container>
     </div>
   );
 }
