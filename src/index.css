@@ -6,3 +6,10 @@
   box-sizing: border-box;
   font-family: "Lato", sans-serif;
 }
+
+.Container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+}
