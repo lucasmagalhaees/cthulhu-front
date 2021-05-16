@@ -1,11 +1,11 @@
 header.AppHeader {
-  background-color: #09f;
+  background-color: #24bdd4;
   color: white;
   height: 50px;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 10px;
+  padding: 35px;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
 }
 

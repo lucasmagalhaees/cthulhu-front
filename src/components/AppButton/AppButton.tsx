@@ -9,7 +9,7 @@ export interface ButtonProps {
 const AppButton: React.FC<ButtonProps> = (props) => {
   return (
     <div>
-      <button className="btn btn-outline-primary" type="button">
+      <button className="btn btn-outline-info" type="button">
         Clique aqui
       </button>
     </div>
