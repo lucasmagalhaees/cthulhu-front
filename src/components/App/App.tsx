@@ -1,6 +1,6 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import Container from "../../shared/Container";
-import AppButton from "../AppButton";
+import AppButton from "../../shared/AppButton";
 import Header from "../Header";
 import "./App.css";
 
@@ -20,7 +20,7 @@ function App() {
     <div className="App">
       <Header title="Algastock"></Header>
       <Container>
-        <AppButton></AppButton>
+        <AppButton content="Button"></AppButton>
       </Container>
     </div>
   );
