@@ -4,8 +4,7 @@ import { getAllProducts } from "../../services/Products.service";
 import Container from "../../shared/Container";
 import { Product } from "../../usecase/product";
 import Header from "../Header";
-import AppTable from "../Table";
-import { TableHeader } from "../Table/Table";
+import AppTable, { TableHeader } from "../Table";
 import "./App.css";
 
 function App() {
