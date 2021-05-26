@@ -1,4 +1,4 @@
-import { TableHeader } from "../components/CustomTable/CustomTable"
+import { TableHeader } from "../components/Table/Table"
 
 type IndexedHeaders = {
   [key: string]: TableHeader

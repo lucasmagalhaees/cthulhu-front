@@ -3,9 +3,9 @@ import React, { useEffect, useState } from "react";
 import { getAllProducts } from "../../services/Products.service";
 import Container from "../../shared/Container";
 import { Product } from "../../usecase/product";
-import CustomTable from "../CustomTable";
 import Header from "../Header";
 import AppTable from "../Table";
+import { TableHeader } from "../Table/Table";
 import "./App.css";
 
 function App() {
@@ -19,19 +19,19 @@ function App() {
 
     fetchData();
   }, []);
-
-  const headers: any[] = [
-    { key: "id", value: "#" },
+  const headers: TableHeader[] = [
+    { key: "_id", value: "Id" },
     { key: "name", value: "Product" },
     { key: "price", value: "Price", right: true },
     { key: "stock", value: "Available Stock", right: true },
+    { key: "actions", value: "Actions", right: true },
   ];
 
   return (
     <div className="App">
       <Header title="Algastock"></Header>
       <Container>
-        <AppTable></AppTable>
+        <AppTable data={products} headers={headers}></AppTable>
       </Container>
     </div>
   );

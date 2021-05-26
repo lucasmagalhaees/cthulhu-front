@@ -1,84 +1,92 @@
-import React, { useEffect, useState } from "react";
-import { Table } from "react-bootstrap";
-import { getAllProducts } from "../../services/Products.service";
-import { Product } from "../../usecase/product";
-import { BsFillTrashFill, BsPencil, BsSearch } from "react-icons/bs";
+import React from "react";
 import "./Table.scss";
 
-export interface TableProps {}
+export interface TableProps {
+  data: any[];
+  headers: TableHeader[];
+}
 
-const headers = [
-  { key: "name", value: "Product" },
-  { key: "price", value: "Price", right: true },
-  { key: "stock", value: "Available Stock", right: true },
-  { key: "actions", value: "Actions", right: true },
-];
+export interface TableHeader {
+  key: string;
+  value: string;
+  right?: boolean;
+}
 
-function AppTable() {
-  const [products, setProducts] = useState<Product[]>([]);
+type IndexedHeaders = {
+  [key: string]: TableHeader;
+};
 
-  useEffect(() => {
-    async function fetchData() {
-      const _products = await getAllProducts();
-      setProducts(_products);
-    }
+type OrganizedItem = {
+  [key: string]: any;
+};
 
-    fetchData();
-  }, []);
+function organizeData(
+  data: any[],
+  headers: TableHeader[]
+): [OrganizedItem[], IndexedHeaders] {
+  const indexedHeaders: IndexedHeaders = {};
+
+  headers.forEach((header) => {
+    indexedHeaders[header.key] = {
+      ...header,
+    };
+  });
+
+  const headerKeysInOrder = Object.keys(indexedHeaders);
+
+  const organizedData = data.map((item) => {
+    const organizedItem: OrganizedItem = {};
+
+    headerKeysInOrder.forEach((key) => {
+      organizedItem[key] = item[key];
+    });
+
+    organizedItem.$original = item;
+
+    return organizedItem;
+  });
+
+  return [organizedData, indexedHeaders];
+}
+
+const AppTable: React.FC<TableProps> = (props) => {
+  const _headers = props.headers;
+  const _data = props.data;
+  const [organizedData, indexedHeaders] = organizeData(_data, _headers);
 
   return (
-    <div className="AppTable text-center">
-      <Table responsive>
-        <thead>
+    <div>
+      <table className="AppTable">
+        <thead className="bg-info">
           <tr>
-            {Array.from(headers).map((header, index) => (
-              <th key={index}>{header.value}</th>
+            {_headers.map((header) => (
+              <th className={header.right ? "right" : ""} key={header.key}>
+                {header.value}
+              </th>
             ))}
           </tr>
         </thead>
         <tbody>
-          {products.map((product) => {
+          {organizedData.map((row, i) => {
             return (
-              <tr key={product.name}>
-                <td>{product.name}</td>
-                <td>{product.price}</td>
-                <td>{product.stock}</td>
-                <td>
-                  <button
-                    onClick={() => {
-                      console.log(product._id);
-                    }}
-                    className="mr-3 btn btn-outline-info"
-                    type="button"
-                  >
-                    <BsSearch></BsSearch>
-                  </button>
-                  <button
-                    onClick={() => {
-                      console.log(product._id);
-                    }}
-                    className="mr-3 btn btn-outline-warning"
-                    type="button"
-                  >
-                    <BsPencil></BsPencil>
-                  </button>
-                  <button
-                    onClick={() => {
-                      console.log(product._id);
-                    }}
-                    className="btn btn-outline-danger round"
-                    type="button"
-                  >
-                    <BsFillTrashFill></BsFillTrashFill>
-                  </button>
-                </td>
+              <tr key={i}>
+                {Object.keys(row).map((item, i) =>
+                  item !== "$original" ? (
+                    <td
+                      key={row.$original.id + i}
+                      className={indexedHeaders[item].right ? "right" : ""}
+                    >
+                      {row[item]}
+                    </td>
+                  ) : null
+                )}
               </tr>
             );
           })}
         </tbody>
-      </Table>
+      </table>
     </div>
   );
-}
+};
 
 export default AppTable;
