@@ -1,20 +1,29 @@
-import { ReactComponent } from "*.svg";
 import * as React from "react";
-import { readConfigFile } from "typescript";
 import "./Button.css";
 
 export interface ButtonProps {
-  content?: string;
+  content: string;
+  style: string;
+  outline?: boolean;
   onClick?: () => void;
-  appendIcon: JSX.Element;
+  appendIcon?: JSX.Element;
 }
 
 const Button: React.FC<ButtonProps> = (props) => {
   return (
     <div>
-      <button onClick={props.onClick} className="AppButton">
-        {props.children || "Nameless Button"}
-        {props.appendIcon}
+      <button
+        onClick={props.onClick}
+        className={`customButton btn btn${props.outline ? "-outline" : ""}${
+          "-" + props.style
+        }`}
+        type="button"
+      >
+        <span className="innerButton">
+          <h6 className="textButton">{props.content?.toUpperCase()}</h6>
+
+          {props.appendIcon && <div className="ml-2"> {props.appendIcon}</div>}
+        </span>
       </button>
     </div>
   );

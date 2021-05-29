@@ -1,22 +1,18 @@
-import { InputGroup, Button, FormControl } from "react-bootstrap";
+import React from "react";
 import "./Input.css";
-export interface InputProps {
-  fieldName: string;
-  placeholder: string;
+
+declare interface InputProps
+  extends React.InputHTMLAttributes<HTMLInputElement> {
+  label: string;
 }
 
 const Input: React.FC<InputProps> = (props) => {
   return (
     <div className="AppInput">
-      <InputGroup className="mb-3">
-        <InputGroup.Prepend>
-          <Button variant="info disabled">{props.fieldName}</Button>
-        </InputGroup.Prepend>
-        <FormControl
-          placeholder={props.placeholder}
-          aria-describedby="basic-addon1"
-        />
-      </InputGroup>
+      <label>
+        <span>{props.label}</span>
+        <input {...props} />
+      </label>
     </div>
   );
 };
