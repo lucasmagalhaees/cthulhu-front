@@ -1,6 +1,10 @@
 import React from "react";
+import { BsFillTrashFill, BsPencil, BsSearch } from "react-icons/bs";
 import organizeData from "../../utils/organizeDataForTable";
 import "./Table.scss";
+import ReactTooltip from "react-tooltip";
+import Button from "../Button";
+import TooltipButton from "../TooltipButton";
 
 export interface TableProps {
   data: any[];
@@ -32,6 +36,9 @@ const AppTable: React.FC<TableProps> = (props) => {
                 {header.value}
               </th>
             ))}
+            {props.enableActions && (
+              <th className="actions actions-text">Actions</th>
+            )}
           </tr>
         </thead>
         <tbody>
@@ -47,6 +54,50 @@ const AppTable: React.FC<TableProps> = (props) => {
                       {row[item]}
                     </td>
                   ) : null
+                )}
+                <ReactTooltip />
+                {props.enableActions && (
+                  <td className="actions right">
+                    {props.onDetail && (
+                      <div>
+                        <div className="App">
+                          <TooltipButton
+                            dataFor="detailTip"
+                            tooltip="Detail Product"
+                            submit={true}
+                            style="info"
+                            outline={true}
+                            onClick={() =>
+                              props.onDetail && props.onDetail(row)
+                            }
+                            appendIcon={<BsSearch></BsSearch>}
+                          ></TooltipButton>
+                        </div>
+                      </div>
+                    )}
+                    {props.onEdit && (
+                      <TooltipButton
+                        dataFor="EditTip"
+                        tooltip="Edit Product"
+                        submit={true}
+                        style="dark"
+                        outline={true}
+                        onClick={() => props.onEdit && props.onEdit(row)}
+                        appendIcon={<BsPencil></BsPencil>}
+                      ></TooltipButton>
+                    )}
+                    {props.onDelete && (
+                      <TooltipButton
+                        dataFor="DeleteTip"
+                        tooltip="Delete Product"
+                        submit={true}
+                        style="danger"
+                        outline={true}
+                        onClick={() => props.onDelete && props.onDelete(row)}
+                        appendIcon={<BsFillTrashFill></BsFillTrashFill>}
+                      ></TooltipButton>
+                    )}
+                  </td>
                 )}
               </tr>
             );

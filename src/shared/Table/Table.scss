@@ -35,4 +35,12 @@ table.AppTable {
       }
     }
   }
+
+  .actions {
+    display: flex;
+    flex-direction: row;
+    > *:not(:last-child) {
+      margin-right: 5px;
+    }
+  }
 }

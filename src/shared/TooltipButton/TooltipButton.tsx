@@ -1,19 +1,24 @@
 import * as React from "react";
-import "./Button.css";
+import ReactTooltip from "react-tooltip";
+import "./TooltipButton.css";
 
-export interface ButtonProps {
+export interface TooltipButtonProps {
   content?: string;
   style: string;
   outline?: boolean;
   onClick?: () => void;
   appendIcon?: JSX.Element;
   submit?: boolean;
+  dataFor?: string;
+  tooltip?: string;
 }
 
-const Button: React.FC<ButtonProps> = (props) => {
+const TooltipButton: React.FC<TooltipButtonProps> = (props) => {
   return (
     <div>
       <button
+        data-tip
+        data-for={props.dataFor}
         onClick={props.onClick}
         className={`customButton btn btn${props.outline ? "-outline" : ""}${
           "-" + props.style
@@ -30,8 +35,11 @@ const Button: React.FC<ButtonProps> = (props) => {
           )}
         </span>
       </button>
+      <ReactTooltip id={props.dataFor} place="top" effect="solid">
+        {props.tooltip}
+      </ReactTooltip>
     </div>
   );
 };
 
-export default Button;
+export default TooltipButton;
