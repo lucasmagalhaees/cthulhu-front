@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { BsCursorFill, BsFillXCircleFill } from "react-icons/bs";
+import {
+  BsBookmarkPlus,
+  BsBookmarks,
+  BsCursorFill,
+  BsFillXCircleFill,
+} from "react-icons/bs";
 import Button from "../../shared/Button";
 import Form from "../../shared/Form";
 import Input from "../../shared/Input";
@@ -118,11 +123,17 @@ const ProductForm: React.FC<ProductFormProps> = (props) => {
       />
       <div className="buttonForm">
         <Button
-          content={form._id ? "Update" : "Submit"}
+          content={form._id ? "Update" : "Register"}
           submit={true}
           color="info"
           outline={true}
-          appendIcon={<BsCursorFill></BsCursorFill>}
+          appendIcon={
+            form._id ? (
+              <BsBookmarks></BsBookmarks>
+            ) : (
+              <BsBookmarkPlus></BsBookmarkPlus>
+            )
+          }
         ></Button>
         {form._id && (
           <Button
