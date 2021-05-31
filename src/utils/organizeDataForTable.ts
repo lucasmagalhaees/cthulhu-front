@@ -22,6 +22,7 @@ export default function organizeData(
   });
 
   const headerKeysInOrder = Object.keys(indexedHeaders);
+  console.log(data);
 
   const organizedData = data.map((item) => {
     const organizedItem: OrganizedItem = {};

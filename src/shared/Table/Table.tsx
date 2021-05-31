@@ -45,7 +45,7 @@ const AppTable: React.FC<TableProps> = (props) => {
             return (
               <tr key={i}>
                 {Object.keys(row).map((item, i) =>
-                  item !== "_id" ? (
+                  item !== PKDataEnum.ID ? (
                     <td
                       key={row[PKDataEnum.ID] + i}
                       className={indexedHeaders[item].right ? "right" : ""}
