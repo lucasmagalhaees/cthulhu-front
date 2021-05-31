@@ -1,10 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  BsBookmarkPlus,
-  BsBookmarks,
-  BsCursorFill,
-  BsFillXCircleFill,
-} from "react-icons/bs";
+import { BsBookmarkPlus, BsBookmarks, BsFillXCircleFill } from "react-icons/bs";
 import Button from "../../shared/Button";
 import Form from "../../shared/Form";
 import Input from "../../shared/Input";

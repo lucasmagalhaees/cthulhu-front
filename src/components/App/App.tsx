@@ -16,7 +16,6 @@ import ProductForm, { ProductCreator } from "../Products/ProductForm";
 import "./App.css";
 
 const headers: TableHeader[] = [
-  { key: "_id", value: "Id" },
   { key: "name", value: "Product" },
   { key: "price", value: "Price", right: true },
   { key: "stock", value: "Available Stock", right: true },

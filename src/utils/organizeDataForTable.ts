@@ -1,36 +1,39 @@
-import { TableHeader } from "../shared/Table/Table"
+import { PKDataEnum } from "./../enums/PKDataEnum";
+import { TableHeader } from "../shared/Table/Table";
 
 type IndexedHeaders = {
-  [key: string]: TableHeader
-}
+  [key: string]: TableHeader;
+};
 
 type OrganizedItem = {
-  [key: string]: any
-}
+  [key: string]: any;
+};
 
-export default function organizeData (data: any[], headers: TableHeader[]):
-  [OrganizedItem[], IndexedHeaders] {
-  const indexedHeaders: IndexedHeaders = {}
+export default function organizeData(
+  data: any[],
+  headers: TableHeader[]
+): [OrganizedItem[], IndexedHeaders] {
+  const indexedHeaders: IndexedHeaders = {};
 
-  headers.forEach(header => {
+  headers.forEach((header) => {
     indexedHeaders[header.key] = {
-      ...header
-    }
-  })
+      ...header,
+    };
+  });
 
-  const headerKeysInOrder = Object.keys(indexedHeaders)
+  const headerKeysInOrder = Object.keys(indexedHeaders);
 
-  const organizedData = data.map(item => {
-    const organizedItem: OrganizedItem = {}
+  const organizedData = data.map((item) => {
+    const organizedItem: OrganizedItem = {};
 
-    headerKeysInOrder.forEach(key => {
-      organizedItem[key] = item[key]
-    })
+    headerKeysInOrder.forEach((key) => {
+      organizedItem[key] = item[key];
+    });
 
-    organizedItem.$original = item
+    organizedItem[PKDataEnum.ID] = item[PKDataEnum.ID];
 
-    return organizedItem
-  })
+    return organizedItem;
+  });
 
-  return [organizedData, indexedHeaders]
+  return [organizedData, indexedHeaders];
 }

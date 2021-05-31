@@ -3,6 +3,7 @@ import { BsFillTrashFill, BsPencil, BsSearch } from "react-icons/bs";
 import organizeData from "../../utils/organizeDataForTable";
 import "./Table.scss";
 import TooltipButton from "../TooltipButton";
+import { PKDataEnum } from "../../enums/PKDataEnum";
 
 export interface TableProps {
   data: any[];
@@ -44,9 +45,9 @@ const AppTable: React.FC<TableProps> = (props) => {
             return (
               <tr key={i}>
                 {Object.keys(row).map((item, i) =>
-                  item !== "$original" ? (
+                  item !== "_id" ? (
                     <td
-                      key={row.$original._id + i}
+                      key={row[PKDataEnum.ID] + i}
                       className={indexedHeaders[item].right ? "right" : ""}
                     >
                       {row[item]}
