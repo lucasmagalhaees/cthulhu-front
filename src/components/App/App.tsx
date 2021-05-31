@@ -46,12 +46,15 @@ function App() {
     }
   };
 
-  const updateProduct = async (newProduct: Product) => {
+  const updateProduct = async (newProduct: Product, cancelEdtion: boolean) => {
     try {
-      await updateSingleProduct(newProduct);
+      if (!cancelEdtion) {
+        await updateSingleProduct(newProduct);
+        setUpdatingProduct(undefined);
+        fetchData();
+        launchSuccessFulSwal(PersistenceOperationEnum.UPDATE);
+      }
       setUpdatingProduct(undefined);
-      fetchData();
-      launchSuccessFulSwal(PersistenceOperationEnum.UPDATE);
     } catch (err) {
       Swal.fire("Oops!", err.message, "error");
     }

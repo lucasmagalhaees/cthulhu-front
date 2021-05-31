@@ -4,7 +4,7 @@ import "./TooltipButton.css";
 
 export interface TooltipButtonProps {
   content?: string;
-  style: string;
+  color: string;
   outline?: boolean;
   onClick?: () => void;
   appendIcon?: JSX.Element;
@@ -21,7 +21,7 @@ const TooltipButton: React.FC<TooltipButtonProps> = (props) => {
         data-for={props.dataFor}
         onClick={props.onClick}
         className={`customButton btn btn${props.outline ? "-outline" : ""}${
-          "-" + props.style
+          "-" + props.color
         }`}
         type={props.submit ? "submit" : "button"}
       >

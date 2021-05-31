@@ -2,8 +2,6 @@ import React from "react";
 import { BsFillTrashFill, BsPencil, BsSearch } from "react-icons/bs";
 import organizeData from "../../utils/organizeDataForTable";
 import "./Table.scss";
-import ReactTooltip from "react-tooltip";
-import Button from "../Button";
 import TooltipButton from "../TooltipButton";
 
 export interface TableProps {
@@ -48,14 +46,14 @@ const AppTable: React.FC<TableProps> = (props) => {
                 {Object.keys(row).map((item, i) =>
                   item !== "$original" ? (
                     <td
-                      key={row.$original.id + i}
+                      key={row.$original._id + i}
                       className={indexedHeaders[item].right ? "right" : ""}
                     >
                       {row[item]}
                     </td>
                   ) : null
                 )}
-                <ReactTooltip />
+
                 {props.enableActions && (
                   <td className="actions right">
                     {props.onDetail && (
@@ -65,7 +63,7 @@ const AppTable: React.FC<TableProps> = (props) => {
                             dataFor="detailTip"
                             tooltip="Detail Product"
                             submit={true}
-                            style="info"
+                            color="info"
                             outline={true}
                             onClick={() =>
                               props.onDetail && props.onDetail(row)
@@ -80,7 +78,7 @@ const AppTable: React.FC<TableProps> = (props) => {
                         dataFor="EditTip"
                         tooltip="Edit Product"
                         submit={true}
-                        style="dark"
+                        color="dark"
                         outline={true}
                         onClick={() => props.onEdit && props.onEdit(row)}
                         appendIcon={<BsPencil></BsPencil>}
@@ -91,7 +89,7 @@ const AppTable: React.FC<TableProps> = (props) => {
                         dataFor="DeleteTip"
                         tooltip="Delete Product"
                         submit={true}
-                        style="danger"
+                        color="danger"
                         outline={true}
                         onClick={() => props.onDelete && props.onDelete(row)}
                         appendIcon={<BsFillTrashFill></BsFillTrashFill>}

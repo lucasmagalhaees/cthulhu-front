@@ -22,7 +22,7 @@ export interface ProductCreator {
 declare interface ProductFormProps {
   form?: Product;
   onSubmit?: (product: ProductCreator) => void;
-  onUpdate?: (product: Product) => void;
+  onUpdate?: (product: Product, cancelEdition: boolean) => void;
 }
 
 const ProductForm: React.FC<ProductFormProps> = (props) => {
@@ -40,6 +40,7 @@ const ProductForm: React.FC<ProductFormProps> = (props) => {
       };
 
   const [form, setForm] = useState(initialFormState);
+  const [cancelEdition, setCancelEdition] = useState(false);
 
   useEffect(() => {
     setForm(initialFormState);
@@ -53,7 +54,7 @@ const ProductForm: React.FC<ProductFormProps> = (props) => {
       [name]: value,
     });
   };
-  const updateProduct = (product: InitialFormState) => {
+  const updateProduct = (product: InitialFormState, cancelEdition: boolean) => {
     const productDto = {
       _id: String(product._id),
       name: String(product.name),
@@ -61,7 +62,8 @@ const ProductForm: React.FC<ProductFormProps> = (props) => {
       stock: Number(product.stock),
     };
 
-    props.onUpdate && props.onUpdate(productDto);
+    props.onUpdate && props.onUpdate(productDto, cancelEdition);
+    setCancelEdition(false);
   };
 
   const createProduct = (product: InitialFormState) => {
@@ -75,7 +77,7 @@ const ProductForm: React.FC<ProductFormProps> = (props) => {
   };
 
   const handleFormSubmit = () => {
-    form._id ? updateProduct(form) : createProduct(form);
+    form._id ? updateProduct(form, cancelEdition) : createProduct(form);
 
     setForm(initialFormState);
   };
@@ -118,16 +120,16 @@ const ProductForm: React.FC<ProductFormProps> = (props) => {
         <Button
           content={form._id ? "Update" : "Submit"}
           submit={true}
-          style="info"
+          color="info"
           outline={true}
           appendIcon={<BsCursorFill></BsCursorFill>}
         ></Button>
         {form._id && (
           <Button
-            onClick={() => setForm(initialFormState)}
+            onClick={() => setCancelEdition(true)}
             content={"Cancel"}
             submit={true}
-            style="danger"
+            color="danger"
             outline={true}
             appendIcon={<BsFillXCircleFill></BsFillXCircleFill>}
           ></Button>

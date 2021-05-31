@@ -3,7 +3,7 @@ import "./Button.css";
 
 export interface ButtonProps {
   content?: string;
-  style: string;
+  color: string;
   outline?: boolean;
   onClick?: () => void;
   appendIcon?: JSX.Element;
@@ -16,7 +16,7 @@ const Button: React.FC<ButtonProps> = (props) => {
       <button
         onClick={props.onClick}
         className={`customButton btn btn${props.outline ? "-outline" : ""}${
-          "-" + props.style
+          "-" + props.color
         }`}
         type={props.submit ? "submit" : "button"}
       >
