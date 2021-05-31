@@ -19,6 +19,8 @@ const headers: TableHeader[] = [
   { key: "name", value: "Product" },
   { key: "price", value: "Price", right: true },
   { key: "stock", value: "Available Stock", right: true },
+  { key: "createdAt", value: "Created At" },
+  { key: "updatedAt", value: "Updated At" },
 ];
 
 function App() {

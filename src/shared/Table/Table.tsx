@@ -4,6 +4,7 @@ import organizeData from "../../utils/organizeDataForTable";
 import "./Table.scss";
 import TooltipButton from "../TooltipButton";
 import { PKDataEnum } from "../../enums/PKDataEnum";
+import { ProductDTO } from "../../usecase/product";
 
 export interface TableProps {
   data: any[];
@@ -21,8 +22,19 @@ export interface TableHeader {
 }
 
 const AppTable: React.FC<TableProps> = (props) => {
+  const formatProducts = (data: ProductDTO[]) => {
+    return data.map((item) => {
+      return {
+        ...item,
+        createdAt: new Date(item.createdAt).toLocaleString(),
+        updatedAt: new Date(item.updatedAt).toLocaleString(),
+      };
+    });
+  };
   const _headers = props.headers;
-  const _data = props.data;
+  const _data = formatProducts(props.data);
+  console.log(formatProducts(props.data));
+
   const [organizedData, indexedHeaders] = organizeData(_data, _headers);
 
   return (
