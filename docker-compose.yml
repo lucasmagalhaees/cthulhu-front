@@ -1,0 +1,8 @@
+version: '3.7'
+services:
+  cthulhufront:
+    build: .
+    container_name: cthulhu-app
+    restart: always
+    ports:
+      - "3010:80"

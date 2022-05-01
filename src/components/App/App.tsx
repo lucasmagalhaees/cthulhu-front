@@ -1,143 +1,163 @@
-import "bootstrap/dist/css/bootstrap.min.css";
-import React, { useEffect, useState } from "react";
-import Swal from "sweetalert2";
-import { PersistenceOperationEnum } from "../../enums/PersistenceOperationEnum";
-import {
-  createSingleProduct,
-  deleteSingleProduct,
-  getAllProducts,
-  updateSingleProduct,
-} from "../../services/ProductService";
-import Container from "../../shared/Container";
-import AppTable, { TableHeader } from "../../shared/Table";
-import { Product } from "../../usecase/product";
-import Header from "../Header";
-import ProductForm, { ProductCreator } from "../Products/ProductForm";
-import "./App.css";
-
-const headers: TableHeader[] = [
-  { key: "name", value: "Product" },
-  { key: "price", value: "Price", right: true },
-  { key: "stock", value: "Available Stock", right: true },
-  { key: "createdAt", value: "Created At" },
-  { key: "updatedAt", value: "Updated At" },
-];
+import 'bootstrap/dist/css/bootstrap.min.css';
+import React, { useEffect, useState } from 'react';
+import { Card, ListGroup, Table } from 'react-bootstrap';
+import { getAllProducts } from '../../services/ProductService';
+import { Sheet, Skill } from '../../usecase/sheet';
+import Navbar from '../Navbar';
+import './App.css';
+import Container from './../../shared/Container/Container';
 
 function App() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [updatingProduct, setUpdatingProduct] =
-    useState<Product | undefined>(undefined);
+  const [sheet, setSheet] = useState<Sheet>();
+  const [skills, setSkills] = useState<Skill[]>([]);
+  const [skillFirst, setSkillFirst] = useState<Skill[]>([]);
+  const [skillSecond, setSkillSecond] = useState<Skill[]>([]);
+  const [charFirst, setCharFirst] = useState<Skill[]>([]);
+  const [charSecond, setCharSecond] = useState<Skill[]>([]);
+  const [characteristics, setCharacteristics] = useState<Skill[]>([]);
 
   async function fetchData() {
-    const _products = await getAllProducts();
-    setProducts(_products);
+    const _sheet = await getAllProducts();
+    setSheet(_sheet);
+    setSkills(_sheet.skills);
+    setCharacteristics(_sheet.characteristics);
+    const middleChar = Math.ceil(characteristics.length / 2);
+    setCharFirst(characteristics.splice(0, middleChar));
+    setCharSecond(characteristics.splice(-middleChar));
+    const middleSkill = Math.ceil(skills.length / 2);
+    setSkillFirst(skills.splice(0, middleSkill));
+    setSkillSecond(skills.splice(-middleSkill));
   }
 
   useEffect(() => {
     fetchData();
   }, []);
 
-  const createProduct = async (product: ProductCreator) => {
-    try {
-      await createSingleProduct(product);
-      fetchData();
-      launchSuccessFulSwal(PersistenceOperationEnum.CREATE);
-    } catch (err) {
-      Swal.fire("Oops!", err.message, "error");
-    }
-  };
-
-  const updateProduct = async (newProduct: Product, cancelEdtion: boolean) => {
-    try {
-      if (!cancelEdtion) {
-        await updateSingleProduct(newProduct);
-        setUpdatingProduct(undefined);
-        fetchData();
-        launchSuccessFulSwal(PersistenceOperationEnum.UPDATE);
-      }
-      setUpdatingProduct(undefined);
-    } catch (err) {
-      Swal.fire("Oops!", err.message, "error");
-    }
-  };
-
-  const deleteProduct = async (id: string) => {
-    try {
-      await deleteSingleProduct(id);
-      fetchData();
-      launchSuccessFulSwal(PersistenceOperationEnum.DELETE);
-    } catch (err) {
-      Swal.fire("Something went wrong", err.message, "error");
-    }
-  };
-
-  const openRemoveModal = (product: Product) => {
-    lauchDeleteSwal(product).then((result) => {
-      if (result.value) {
-        deleteProduct(product._id);
-      }
-    });
-  };
-
-  const openDetailModal = (product: Product) => {
-    launchDetailSwal(product);
-  };
-
-  const fillForm = (product: Product) => {
-    setUpdatingProduct(product);
-  };
-
-  const launchSuccessFulSwal = (operation: PersistenceOperationEnum) => {
-    Swal.fire({
-      title: `Completed`,
-      text: `Product successfully ${operation}`,
-      icon: "success",
-      confirmButtonColor: "#17A2B8",
-      confirmButtonText: `Done`,
-    });
-  };
-
-  const lauchDeleteSwal = (product: Product) => {
-    return Swal.fire({
-      title: `Sure to delete ${product.name}?`,
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#17A2B8",
-      cancelButtonColor: "#ff9100",
-      confirmButtonText: `Yes, delete ${product.name}!`,
-    });
-  };
-
-  const launchDetailSwal = (product: Product) => {
-    Swal.fire(
-      "Product details",
-      `Name: ${product.name} </br>
-       Price: $ ${product.price} </br>
-
-       Stock: ${product.stock} units`,
-      "info"
-    );
-  };
-
   return (
-    <div className="App">
-      <Header title="Algastock"></Header>
+    <div className='App'>
+      <Navbar title='Call of Cthulhu Char' subtitle='Insanity Awaits'></Navbar>
+
       <Container>
-        <AppTable
-          headers={headers}
-          data={products}
-          enableActions
-          onDelete={openRemoveModal}
-          onDetail={openDetailModal}
-          onEdit={fillForm}
-        ></AppTable>
-        <ProductForm
-          form={updatingProduct}
-          onSubmit={createProduct}
-          onUpdate={updateProduct}
-        />
+        <button className='mb-4 mt-2 button-background' onClick={fetchData}>
+          Generate Sheet
+        </button>
+
+        <Card className='mb-4' style={{ width: '18rem' }}>
+          <ListGroup variant='flush'>
+            <ListGroup.Item>Hit Points: {sheet?.hitPoints}</ListGroup.Item>
+            <ListGroup.Item>Age: {sheet?.age}</ListGroup.Item>
+            <ListGroup.Item>
+              Movement Rate: {sheet?.movementRate}
+            </ListGroup.Item>
+            <ListGroup.Item>Build: {sheet?.build}</ListGroup.Item>
+            <ListGroup.Item>Build: {sheet?.magicPoints}</ListGroup.Item>
+            <ListGroup.Item>
+              Native Language: {sheet?.nativeLanguage}
+            </ListGroup.Item>
+            <ListGroup.Item>
+              Foreign Language: {sheet?.foreignLanguage}
+            </ListGroup.Item>
+          </ListGroup>
+        </Card>
       </Container>
+      <div className='box'>
+        <div className='row'>
+          <div className='column'>
+            <Table responsive striped bordered hover>
+              <thead>
+                <tr>
+                  <th className='text-center'>Attribute</th>
+                  <th className='text-center'>Main </th>
+                  <th className='text-center'>Half </th>
+                  <th className='text-center'>Fifth</th>
+                </tr>
+              </thead>
+              <tbody>
+                {charFirst &&
+                  charFirst.map((item) => (
+                    <tr key={item.attributeName}>
+                      <td className='text-center'>{item.attributeName}</td>
+                      <td className='text-center'>{item.mainValue}</td>
+                      <td className='text-center'>{item.halfValue}</td>
+                      <td className='text-center'>{item.fifthValue}</td>
+                    </tr>
+                  ))}
+              </tbody>
+            </Table>
+          </div>
+          <div className='column'>
+            <Table responsive striped bordered hover>
+              <thead>
+                <tr>
+                  <th className='text-center'>Attribute</th>
+                  <th className='text-center'>Main </th>
+                  <th className='text-center'>Half </th>
+                  <th className='text-center'>Fifth</th>
+                </tr>
+              </thead>
+              <tbody>
+                {charSecond &&
+                  charSecond.map((item) => (
+                    <tr key={item.attributeName}>
+                      <td className='text-center'>{item.attributeName}</td>
+                      <td className='text-center'>{item.mainValue}</td>
+                      <td className='text-center'>{item.halfValue}</td>
+                      <td className='text-center'>{item.fifthValue}</td>
+                    </tr>
+                  ))}
+              </tbody>
+            </Table>
+          </div>
+        </div>
+        <div className='row'>
+          <div className='column'>
+            <Table responsive striped bordered hover>
+              <thead>
+                <tr>
+                  <th className='text-center'>Skill</th>
+                  <th className='text-center'>Main</th>
+                  <th className='text-center'>Half </th>
+                  <th className='text-center'>Fifth </th>
+                </tr>
+              </thead>
+              <tbody>
+                {skillFirst &&
+                  skillFirst.map((item) => (
+                    <tr key={item.attributeName}>
+                      <td className='text-center'>{item.attributeName}</td>
+                      <td className='text-center'>{item.mainValue}</td>
+                      <td className='text-center'>{item.halfValue}</td>
+                      <td className='text-center'>{item.fifthValue}</td>
+                    </tr>
+                  ))}
+              </tbody>
+            </Table>
+          </div>
+          <div className='column'>
+            <Table responsive striped bordered hover>
+              <thead>
+                <tr>
+                  <th className='text-center'>Skill</th>
+                  <th className='text-center'>Main</th>
+                  <th className='text-center'>Half </th>
+                  <th className='text-center'>Fifth </th>
+                </tr>
+              </thead>
+              <tbody>
+                {skillSecond &&
+                  skillSecond.map((item) => (
+                    <tr key={item.attributeName}>
+                      <td className='text-center'>{item.attributeName}</td>
+                      <td className='text-center'>{item.mainValue}</td>
+                      <td className='text-center'>{item.halfValue}</td>
+                      <td className='text-center'>{item.fifthValue}</td>
+                    </tr>
+                  ))}
+              </tbody>
+            </Table>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
