@@ -1,37 +1,105 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useEffect, useState } from 'react';
-import { Card, ListGroup, Table } from 'react-bootstrap';
+import {
+  Accordion,
+  Badge,
+  Button,
+  FormControl,
+  FormGroup,
+  ListGroup,
+  Table,
+} from 'react-bootstrap';
+import {
+  FaBriefcaseMedical,
+  FaChild,
+  FaMagic,
+  FaRegCalendarAlt,
+  FaRunning,
+  FaUserPlus,
+} from 'react-icons/fa';
 import { getAllProducts } from '../../services/ProductService';
-import { Sheet, Skill } from '../../usecase/sheet';
+import { ISheet, ISkill, Sheet } from '../../usecase/sheet';
 import Navbar from '../Navbar';
-import './App.css';
 import Container from './../../shared/Container/Container';
+import './App.css';
 
 function App() {
-  const [sheet, setSheet] = useState<Sheet>();
-  const [skills, setSkills] = useState<Skill[]>([]);
-  const [skillFirst, setSkillFirst] = useState<Skill[]>([]);
-  const [skillSecond, setSkillSecond] = useState<Skill[]>([]);
-  const [charFirst, setCharFirst] = useState<Skill[]>([]);
-  const [charSecond, setCharSecond] = useState<Skill[]>([]);
-  const [characteristics, setCharacteristics] = useState<Skill[]>([]);
+  const [sheet, setSheet] = useState<ISheet>();
+  const [file, setFile] = useState<any>();
+  const [skills, setSkills] = useState<ISkill[]>([]);
+  const [skillFirst, setSkillFirst] = useState<ISkill[]>([]);
+  const [skillSecond, setSkillSecond] = useState<ISkill[]>([]);
+  const [charFirst, setCharFirst] = useState<ISkill[]>([]);
+  const [charSecond, setCharSecond] = useState<ISkill[]>([]);
+  const [characteristics, setCharacteristics] = useState<ISkill[]>([]);
+  const [nativeLanguage, setNativeLanguage] = useState<ISkill>();
+  const [foreignLanguage, setForeignLanguage] = useState<ISkill>();
 
   async function fetchData() {
     const _sheet = await getAllProducts();
     setSheet(_sheet);
     setSkills(_sheet.skills);
     setCharacteristics(_sheet.characteristics);
-    const middleChar = Math.ceil(characteristics.length / 2);
-    setCharFirst(characteristics.splice(0, middleChar));
-    setCharSecond(characteristics.splice(-middleChar));
-    const middleSkill = Math.ceil(skills.length / 2);
-    setSkillFirst(skills.splice(0, middleSkill));
-    setSkillSecond(skills.splice(-middleSkill));
+    handleData(
+      setForeignLanguage,
+      skills,
+      setNativeLanguage,
+      characteristics,
+      setCharFirst,
+      setCharSecond,
+      setSkillFirst,
+      setSkillSecond
+    );
   }
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const importFile = async (importedSheet: any) => {
+    try {
+      const _sheet: ISheet = JSON.parse(importedSheet);
+      setSheet(_sheet);
+      setSkills(_sheet.skills);
+      setCharacteristics(_sheet.characteristics);
+      handleData(
+        setForeignLanguage,
+        skills,
+        setNativeLanguage,
+        characteristics,
+        setCharFirst,
+        setCharSecond,
+        setSkillFirst,
+        setSkillSecond
+      );
+    } catch (e) {
+      console.log('An error on casting object has occurred', e);
+    }
+  };
+
+  const downloadFile = async () => {
+    console.log(sheet);
+    const myData = new Sheet(
+      sheet?.hitPoints || 0,
+      sheet?.age || 0,
+      sheet?.movementRate || 0,
+      sheet?.build || 0,
+      sheet?.bonusDamage || 0,
+      sheet?.magicPoints || 0,
+      sheet?.nativeLanguage || '',
+      sheet?.foreignLanguage || '',
+      skills,
+      characteristics
+    );
+
+    const fileName = `Char_${sheet?.nativeLanguage}_${sheet?.foreignLanguage}`;
+    const json = JSON.stringify(myData);
+
+    const blob = new Blob([json], { type: 'application/json' });
+    const href = await URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = href;
+    link.download = fileName + '.json';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   return (
     <div className='App'>
@@ -41,29 +109,147 @@ function App() {
         <button className='mb-4 mt-2 button-background' onClick={fetchData}>
           Generate Sheet
         </button>
-
-        <Card className='mb-4' style={{ width: '18rem' }}>
-          <ListGroup variant='flush'>
-            <ListGroup.Item>Hit Points: {sheet?.hitPoints}</ListGroup.Item>
-            <ListGroup.Item>Age: {sheet?.age}</ListGroup.Item>
-            <ListGroup.Item>
-              Movement Rate: {sheet?.movementRate}
-            </ListGroup.Item>
-            <ListGroup.Item>Build: {sheet?.build}</ListGroup.Item>
-            <ListGroup.Item>Build: {sheet?.magicPoints}</ListGroup.Item>
-            <ListGroup.Item>
-              Native Language: {sheet?.nativeLanguage}
-            </ListGroup.Item>
-            <ListGroup.Item>
-              Foreign Language: {sheet?.foreignLanguage}
-            </ListGroup.Item>
-          </ListGroup>
-        </Card>
+        <Button
+          variant='outline-success'
+          className='mb-4 mt-2 '
+          onClick={downloadFile}
+        >
+          Download Sheet
+        </Button>
       </Container>
+
+      <div className='box'>
+        <Accordion>
+          <Accordion.Item eventKey='0'>
+            <Accordion.Header>Import Sheet</Accordion.Header>
+            <Accordion.Body>
+              <FormGroup className='m-0'>
+                <FormControl
+                  className='textFeedback'
+                  as='textarea'
+                  placeholder='feedback'
+                  value={file}
+                  onChange={(e) => setFile(e.target.value)}
+                  type='text'
+                />
+                <Button
+                  className='btnFormSend'
+                  variant='outline-success'
+                  onClick={() => importFile(file)}
+                >
+                  Send Feedback
+                </Button>
+              </FormGroup>
+            </Accordion.Body>
+          </Accordion.Item>
+        </Accordion>
+      </div>
+
+      <Container>
+        <ListGroup className='list-group' as='ol'>
+          <ListGroup.Item
+            as='li'
+            className='d-flex justify-content-between align-items-start'
+          >
+            <div className='ms-2 me-auto'>
+              <div className='fw-bold'>Age</div>
+              <FaRegCalendarAlt style={{ color: 'black' }} />
+            </div>
+            <Badge bg='warning' pill>
+              {sheet?.age}
+            </Badge>
+          </ListGroup.Item>
+          <ListGroup.Item
+            as='li'
+            className='d-flex justify-content-between align-items-start'
+          >
+            <div className='ms-2 me-auto'>
+              <div className='fw-bold'>Hit Points</div>
+              <FaBriefcaseMedical style={{ color: 'black' }} />
+            </div>
+            <Badge bg='success' pill>
+              {sheet?.hitPoints}
+            </Badge>
+          </ListGroup.Item>
+          <ListGroup.Item
+            as='li'
+            className='d-flex justify-content-between align-items-start'
+          >
+            <div className='ms-2 me-auto'>
+              <div className='fw-bold'>Build</div>
+              <FaChild style={{ color: 'black' }} />
+            </div>
+            <Badge bg='success' pill>
+              {sheet?.build}
+            </Badge>
+          </ListGroup.Item>
+          <ListGroup.Item
+            as='li'
+            className='d-flex justify-content-between align-items-start'
+          >
+            <div className='ms-2 me-auto'>
+              <div className='fw-bold'>Move Rate</div>
+              <FaRunning style={{ color: 'black' }} />
+            </div>
+            <Badge bg='success' pill>
+              {sheet?.movementRate}
+            </Badge>
+          </ListGroup.Item>
+          <ListGroup.Item
+            as='li'
+            className='d-flex justify-content-between align-items-start'
+          >
+            <div className='ms-2 me-auto'>
+              <div className='fw-bold'>Bonus Damage</div>
+              <FaUserPlus style={{ color: 'black' }} />
+            </div>
+            <Badge bg='danger' pill>
+              {sheet?.bonusDamage}
+            </Badge>
+          </ListGroup.Item>
+          <ListGroup.Item
+            as='li'
+            className='d-flex justify-content-between align-items-start'
+          >
+            <div className='ms-2 me-auto'>
+              <div className='fw-bold'>Magic Points</div>
+              <FaMagic style={{ color: 'black' }} />
+            </div>
+            <Badge bg='danger' pill>
+              {sheet?.magicPoints}
+            </Badge>
+          </ListGroup.Item>
+          <ListGroup.Item
+            as='li'
+            className='d-flex justify-content-between align-items-start'
+          >
+            <div className='ms-2 me-auto'>
+              <div className='fw-bold'>Native Language</div>
+              {sheet?.nativeLanguage}
+            </div>
+            <Badge bg='primary' pill>
+              {nativeLanguage?.mainValue}
+            </Badge>
+          </ListGroup.Item>
+          <ListGroup.Item
+            as='li'
+            className='d-flex justify-content-between align-items-start'
+          >
+            <div className='ms-2 me-auto'>
+              <div className='fw-bold'>Foreign Language</div>
+              {sheet?.foreignLanguage}
+            </div>
+            <Badge bg='primary' pill>
+              {foreignLanguage?.mainValue}
+            </Badge>
+          </ListGroup.Item>
+        </ListGroup>
+      </Container>
+
       <div className='box'>
         <div className='row'>
           <div className='column'>
-            <Table responsive striped bordered hover>
+            <Table className='table-box' responsive striped bordered hover>
               <thead>
                 <tr>
                   <th className='text-center'>Attribute</th>
@@ -86,7 +272,7 @@ function App() {
             </Table>
           </div>
           <div className='column'>
-            <Table responsive striped bordered hover>
+            <Table className='table-box' responsive striped bordered hover>
               <thead>
                 <tr>
                   <th className='text-center'>Attribute</th>
@@ -111,7 +297,7 @@ function App() {
         </div>
         <div className='row'>
           <div className='column'>
-            <Table responsive striped bordered hover>
+            <Table className='table-box' responsive striped bordered hover>
               <thead>
                 <tr>
                   <th className='text-center'>Skill</th>
@@ -134,7 +320,7 @@ function App() {
             </Table>
           </div>
           <div className='column'>
-            <Table responsive striped bordered hover>
+            <Table className='table-box' responsive striped bordered hover>
               <thead>
                 <tr>
                   <th className='text-center'>Skill</th>
@@ -163,3 +349,27 @@ function App() {
 }
 
 export default App;
+function handleData(
+  setForeignLanguage: React.Dispatch<React.SetStateAction<ISkill | undefined>>,
+  skills: ISkill[],
+  setNativeLanguage: React.Dispatch<React.SetStateAction<ISkill | undefined>>,
+  characteristics: ISkill[],
+  setCharFirst: React.Dispatch<React.SetStateAction<ISkill[]>>,
+  setCharSecond: React.Dispatch<React.SetStateAction<ISkill[]>>,
+  setSkillFirst: React.Dispatch<React.SetStateAction<ISkill[]>>,
+  setSkillSecond: React.Dispatch<React.SetStateAction<ISkill[]>>
+) {
+  setForeignLanguage(
+    skills.find((skill) => skill.attributeName.includes('Foreign'))
+  );
+  setNativeLanguage(
+    skills.find((skill) => skill.attributeName.includes('Native'))
+  );
+
+  const middleChar = Math.ceil(characteristics.length / 2);
+  setCharFirst(characteristics.splice(0, middleChar));
+  setCharSecond(characteristics.splice(-middleChar));
+  const middleSkill = Math.ceil(skills.length / 2);
+  setSkillFirst(skills.splice(0, middleSkill));
+  setSkillSecond(skills.splice(-middleSkill));
+}

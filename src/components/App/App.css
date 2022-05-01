@@ -2,6 +2,14 @@
   padding: 50px;
   box-sizing: border-box;
 }
+.list-group {
+  width: 40%;
+  box-shadow: 0 3px 6px;
+}
+
+.table-box {
+  box-shadow: 2px 2px 4px 4px #dddddd;
+}
 
 .row {
   display: flex;
