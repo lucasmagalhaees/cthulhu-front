@@ -30,8 +30,6 @@ function App() {
   const [skillSecond, setSkillSecond] = useState<Skill[]>([]);
   const [charFirst, setCharFirst] = useState<Skill[]>([]);
   const [charSecond, setCharSecond] = useState<Skill[]>([]);
-  const [nativeLanguage, setNativeLanguage] = useState<Skill>();
-  const [foreignLanguage, setForeignLanguage] = useState<Skill>();
 
   async function fetchData() {
     const _sheet = await getAllProducts();
@@ -57,6 +55,10 @@ function App() {
     setCharFirst(_sheet.charFirst);
     setCharSecond(_sheet.charSecond);
   }
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   async function fillData(_sheet: Sheet) {
     setSheet(
@@ -85,8 +87,6 @@ function App() {
   const importFile = async (importedSheet: any) => {
     await clearData(
       setSheet,
-      setForeignLanguage,
-      setNativeLanguage,
       setCharFirst,
       setCharSecond,
       setSkillFirst,
@@ -141,7 +141,7 @@ function App() {
         </button>
         <Button
           variant='outline-success'
-          className='mb-4 mt-2 '
+          className=' mt-2 '
           onClick={downloadFile}
         >
           Download Sheet
@@ -164,13 +164,17 @@ function App() {
                   onChange={(e) => setFile(e.target.value)}
                   type='text'
                 />
-                <Button
-                  className='mt-3'
-                  variant='outline-primary'
-                  onClick={() => importFile(file)}
-                >
-                  Confirm Sheet Upload
-                </Button>
+                <div className='button-container mt-3'>
+                  <Button
+                    variant='outline-primary'
+                    onClick={() => importFile(file)}
+                  >
+                    Confirm Sheet Upload
+                  </Button>
+                  <Button variant='outline-danger' onClick={() => setFile('')}>
+                    Cancel
+                  </Button>
+                </div>
               </FormGroup>
             </Accordion.Body>
           </Accordion.Item>
@@ -187,7 +191,7 @@ function App() {
               <div className='fw-bold'>Age</div>
               <FaRegCalendarAlt style={{ color: 'black' }} />
             </div>
-            <Badge bg='warning' pill>
+            <Badge bg='primary' pill>
               {sheet?.age}
             </Badge>
           </ListGroup.Item>
@@ -259,9 +263,6 @@ function App() {
               <div className='fw-bold'>Native Language</div>
               {sheet?.nativeLanguage}
             </div>
-            <Badge bg='primary' pill>
-              {nativeLanguage?.mainValue}
-            </Badge>
           </ListGroup.Item>
           <ListGroup.Item
             as='li'
@@ -271,9 +272,6 @@ function App() {
               <div className='fw-bold'>Foreign Language</div>
               {sheet?.foreignLanguage}
             </div>
-            <Badge bg='primary' pill>
-              {foreignLanguage?.mainValue}
-            </Badge>
           </ListGroup.Item>
         </ListGroup>
       </Container>
@@ -379,16 +377,12 @@ function App() {
 export default App;
 async function clearData(
   setSheet: React.Dispatch<React.SetStateAction<Sheet | undefined>>,
-  setForeignLanguage: React.Dispatch<React.SetStateAction<Skill | undefined>>,
-  setNativeLanguage: React.Dispatch<React.SetStateAction<Skill | undefined>>,
   setCharFirst: React.Dispatch<React.SetStateAction<Skill[]>>,
   setCharSecond: React.Dispatch<React.SetStateAction<Skill[]>>,
   setSkillFirst: React.Dispatch<React.SetStateAction<Skill[]>>,
   setSkillSecond: React.Dispatch<React.SetStateAction<Skill[]>>
 ) {
   setSheet(new Sheet(0, 0, 0, 0, 0, 0, '', '', [], [], [], []));
-  setForeignLanguage(new Skill('', 0, 0, 0));
-  setNativeLanguage(new Skill('', 0, 0, 0));
   setCharFirst([]);
   setCharSecond([]);
   setSkillFirst([]);

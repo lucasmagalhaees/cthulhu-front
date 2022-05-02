@@ -11,6 +11,12 @@
   box-shadow: 2px 2px 4px 4px #dddddd;
 }
 
+.button-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
 .row {
   display: flex;
 }
