@@ -1,0 +1,13 @@
+.customButton {
+  padding: 4px 14px;
+}
+
+.innerButton {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+}
+
+.textButton {
+  font-size: 14px;
+}
