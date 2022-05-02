@@ -1,5 +1,3 @@
-import { BuilderProgram } from 'typescript';
-
 export interface ISheet {
   hitPoints: number;
   age: number;
@@ -9,8 +7,10 @@ export interface ISheet {
   magicPoints: number;
   nativeLanguage: string;
   foreignLanguage: string;
-  skills: ISkill[];
-  characteristics: ISkill[];
+  skillFirst: ISkill[];
+  skillSecond: ISkill[];
+  charFirst: ISkill[];
+  charSecond: ISkill[];
 }
 
 export class Sheet implements ISheet {
@@ -22,8 +22,10 @@ export class Sheet implements ISheet {
   magicPoints: number;
   nativeLanguage: string;
   foreignLanguage: string;
-  skills: ISkill[];
-  characteristics: ISkill[];
+  skillFirst: ISkill[];
+  skillSecond: ISkill[];
+  charFirst: ISkill[];
+  charSecond: ISkill[];
 
   constructor(
     hitPoints: number,
@@ -34,8 +36,10 @@ export class Sheet implements ISheet {
     magicPoints: number,
     nativeLanguage: string,
     foreignLanguage: string,
-    skills: ISkill[],
-    characteristics: ISkill[]
+    charFirst: ISkill[],
+    charSecond: ISkill[],
+    skillFirst: ISkill[],
+    skillSecond: ISkill[]
   ) {
     this.hitPoints = hitPoints;
     this.age = age;
@@ -45,8 +49,10 @@ export class Sheet implements ISheet {
     this.magicPoints = magicPoints;
     this.nativeLanguage = nativeLanguage;
     this.foreignLanguage = foreignLanguage;
-    this.skills = skills;
-    this.characteristics = characteristics;
+    this.skillFirst = skillFirst;
+    this.charFirst = charFirst;
+    this.skillSecond = skillSecond;
+    this.charSecond = charSecond;
   }
 }
 
@@ -55,4 +61,23 @@ export interface ISkill {
   mainValue: number;
   halfValue: number;
   fifthValue: number;
+}
+
+export class Skill implements ISkill {
+  attributeName: string;
+  mainValue: number;
+  halfValue: number;
+  fifthValue: number;
+
+  constructor(
+    attributeName: string,
+    mainValue: number,
+    halfValue: number,
+    fifthValue: number
+  ) {
+    this.attributeName = attributeName;
+    this.mainValue = mainValue;
+    this.halfValue = halfValue;
+    this.fifthValue = fifthValue;
+  }
 }

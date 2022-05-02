@@ -18,63 +18,91 @@ import {
   FaUserPlus,
 } from 'react-icons/fa';
 import { getAllProducts } from '../../services/ProductService';
-import { ISheet, ISkill, Sheet } from '../../usecase/sheet';
+import { Sheet, Skill } from '../../usecase/sheet';
 import Navbar from '../Navbar';
 import Container from './../../shared/Container/Container';
 import './App.css';
 
 function App() {
-  const [sheet, setSheet] = useState<ISheet>();
+  const [sheet, setSheet] = useState<Sheet>();
   const [file, setFile] = useState<any>();
-  const [skills, setSkills] = useState<ISkill[]>([]);
-  const [skillFirst, setSkillFirst] = useState<ISkill[]>([]);
-  const [skillSecond, setSkillSecond] = useState<ISkill[]>([]);
-  const [charFirst, setCharFirst] = useState<ISkill[]>([]);
-  const [charSecond, setCharSecond] = useState<ISkill[]>([]);
-  const [characteristics, setCharacteristics] = useState<ISkill[]>([]);
-  const [nativeLanguage, setNativeLanguage] = useState<ISkill>();
-  const [foreignLanguage, setForeignLanguage] = useState<ISkill>();
+  const [skillFirst, setSkillFirst] = useState<Skill[]>([]);
+  const [skillSecond, setSkillSecond] = useState<Skill[]>([]);
+  const [charFirst, setCharFirst] = useState<Skill[]>([]);
+  const [charSecond, setCharSecond] = useState<Skill[]>([]);
+  const [nativeLanguage, setNativeLanguage] = useState<Skill>();
+  const [foreignLanguage, setForeignLanguage] = useState<Skill>();
 
   async function fetchData() {
     const _sheet = await getAllProducts();
-    setSheet(_sheet);
-    setSkills(_sheet.skills);
-    setCharacteristics(_sheet.characteristics);
-    handleData(
+    setSheet(
+      new Sheet(
+        _sheet?.hitPoints || 0,
+        _sheet?.age || 0,
+        _sheet?.movementRate || 0,
+        _sheet?.build || 0,
+        _sheet?.bonusDamage || 0,
+        _sheet?.magicPoints || 0,
+        _sheet?.nativeLanguage || '',
+        _sheet?.foreignLanguage || '',
+        _sheet.charFirst,
+        _sheet.charSecond,
+        _sheet.skillFirst,
+        _sheet.skillSecond
+      )
+    );
+
+    setSkillFirst(_sheet.skillFirst);
+    setSkillSecond(_sheet.skillSecond);
+    setCharFirst(_sheet.charFirst);
+    setCharSecond(_sheet.charSecond);
+  }
+
+  async function fillData(_sheet: Sheet) {
+    setSheet(
+      new Sheet(
+        _sheet?.hitPoints || 0,
+        _sheet?.age || 0,
+        _sheet?.movementRate || 0,
+        _sheet?.build || 0,
+        _sheet?.bonusDamage || 0,
+        _sheet?.magicPoints || 0,
+        _sheet?.nativeLanguage || '',
+        _sheet?.foreignLanguage || '',
+        _sheet.charFirst,
+        _sheet.charSecond,
+        _sheet.skillFirst,
+        _sheet.skillSecond
+      )
+    );
+
+    setSkillFirst(_sheet.skillFirst);
+    setSkillSecond(_sheet.skillSecond);
+    setCharFirst(_sheet.charFirst);
+    setCharSecond(_sheet.charSecond);
+  }
+
+  const importFile = async (importedSheet: any) => {
+    await clearData(
+      setSheet,
       setForeignLanguage,
-      skills,
       setNativeLanguage,
-      characteristics,
       setCharFirst,
       setCharSecond,
       setSkillFirst,
       setSkillSecond
     );
-  }
-
-  const importFile = async (importedSheet: any) => {
     try {
-      const _sheet: ISheet = JSON.parse(importedSheet);
-      setSheet(_sheet);
-      setSkills(_sheet.skills);
-      setCharacteristics(_sheet.characteristics);
-      handleData(
-        setForeignLanguage,
-        skills,
-        setNativeLanguage,
-        characteristics,
-        setCharFirst,
-        setCharSecond,
-        setSkillFirst,
-        setSkillSecond
-      );
+      const _sheet: Sheet = JSON.parse(importedSheet);
+      console.log(_sheet);
+
+      await fillData(_sheet);
     } catch (e) {
       console.log('An error on casting object has occurred', e);
     }
   };
 
   const downloadFile = async () => {
-    console.log(sheet);
     const myData = new Sheet(
       sheet?.hitPoints || 0,
       sheet?.age || 0,
@@ -84,8 +112,10 @@ function App() {
       sheet?.magicPoints || 0,
       sheet?.nativeLanguage || '',
       sheet?.foreignLanguage || '',
-      skills,
-      characteristics
+      charFirst,
+      charSecond,
+      skillFirst,
+      skillSecond
     );
 
     const fileName = `Char_${sheet?.nativeLanguage}_${sheet?.foreignLanguage}`;
@@ -121,23 +151,25 @@ function App() {
       <div className='box'>
         <Accordion>
           <Accordion.Item eventKey='0'>
-            <Accordion.Header>Import Sheet</Accordion.Header>
+            <Accordion.Header>Upload Sheet</Accordion.Header>
             <Accordion.Body>
               <FormGroup className='m-0'>
                 <FormControl
                   className='textFeedback'
                   as='textarea'
-                  placeholder='feedback'
+                  rows={20}
+                  placeholder='Place Json
+                  '
                   value={file}
                   onChange={(e) => setFile(e.target.value)}
                   type='text'
                 />
                 <Button
-                  className='btnFormSend'
-                  variant='outline-success'
+                  className='mt-3'
+                  variant='outline-primary'
                   onClick={() => importFile(file)}
                 >
-                  Send Feedback
+                  Confirm Sheet Upload
                 </Button>
               </FormGroup>
             </Accordion.Body>
@@ -259,15 +291,14 @@ function App() {
                 </tr>
               </thead>
               <tbody>
-                {charFirst &&
-                  charFirst.map((item) => (
-                    <tr key={item.attributeName}>
-                      <td className='text-center'>{item.attributeName}</td>
-                      <td className='text-center'>{item.mainValue}</td>
-                      <td className='text-center'>{item.halfValue}</td>
-                      <td className='text-center'>{item.fifthValue}</td>
-                    </tr>
-                  ))}
+                {charFirst.map((item) => (
+                  <tr key={item.attributeName}>
+                    <td className='text-center'>{item.attributeName}</td>
+                    <td className='text-center'>{item.mainValue}</td>
+                    <td className='text-center'>{item.halfValue}</td>
+                    <td className='text-center'>{item.fifthValue}</td>
+                  </tr>
+                ))}
               </tbody>
             </Table>
           </div>
@@ -282,15 +313,14 @@ function App() {
                 </tr>
               </thead>
               <tbody>
-                {charSecond &&
-                  charSecond.map((item) => (
-                    <tr key={item.attributeName}>
-                      <td className='text-center'>{item.attributeName}</td>
-                      <td className='text-center'>{item.mainValue}</td>
-                      <td className='text-center'>{item.halfValue}</td>
-                      <td className='text-center'>{item.fifthValue}</td>
-                    </tr>
-                  ))}
+                {charSecond.map((item) => (
+                  <tr key={item.attributeName}>
+                    <td className='text-center'>{item.attributeName}</td>
+                    <td className='text-center'>{item.mainValue}</td>
+                    <td className='text-center'>{item.halfValue}</td>
+                    <td className='text-center'>{item.fifthValue}</td>
+                  </tr>
+                ))}
               </tbody>
             </Table>
           </div>
@@ -307,15 +337,14 @@ function App() {
                 </tr>
               </thead>
               <tbody>
-                {skillFirst &&
-                  skillFirst.map((item) => (
-                    <tr key={item.attributeName}>
-                      <td className='text-center'>{item.attributeName}</td>
-                      <td className='text-center'>{item.mainValue}</td>
-                      <td className='text-center'>{item.halfValue}</td>
-                      <td className='text-center'>{item.fifthValue}</td>
-                    </tr>
-                  ))}
+                {skillFirst.map((item) => (
+                  <tr key={item.attributeName}>
+                    <td className='text-center'>{item.attributeName}</td>
+                    <td className='text-center'>{item.mainValue}</td>
+                    <td className='text-center'>{item.halfValue}</td>
+                    <td className='text-center'>{item.fifthValue}</td>
+                  </tr>
+                ))}
               </tbody>
             </Table>
           </div>
@@ -330,15 +359,14 @@ function App() {
                 </tr>
               </thead>
               <tbody>
-                {skillSecond &&
-                  skillSecond.map((item) => (
-                    <tr key={item.attributeName}>
-                      <td className='text-center'>{item.attributeName}</td>
-                      <td className='text-center'>{item.mainValue}</td>
-                      <td className='text-center'>{item.halfValue}</td>
-                      <td className='text-center'>{item.fifthValue}</td>
-                    </tr>
-                  ))}
+                {skillSecond.map((item) => (
+                  <tr key={item.attributeName}>
+                    <td className='text-center'>{item.attributeName}</td>
+                    <td className='text-center'>{item.mainValue}</td>
+                    <td className='text-center'>{item.halfValue}</td>
+                    <td className='text-center'>{item.fifthValue}</td>
+                  </tr>
+                ))}
               </tbody>
             </Table>
           </div>
@@ -349,27 +377,20 @@ function App() {
 }
 
 export default App;
-function handleData(
-  setForeignLanguage: React.Dispatch<React.SetStateAction<ISkill | undefined>>,
-  skills: ISkill[],
-  setNativeLanguage: React.Dispatch<React.SetStateAction<ISkill | undefined>>,
-  characteristics: ISkill[],
-  setCharFirst: React.Dispatch<React.SetStateAction<ISkill[]>>,
-  setCharSecond: React.Dispatch<React.SetStateAction<ISkill[]>>,
-  setSkillFirst: React.Dispatch<React.SetStateAction<ISkill[]>>,
-  setSkillSecond: React.Dispatch<React.SetStateAction<ISkill[]>>
+async function clearData(
+  setSheet: React.Dispatch<React.SetStateAction<Sheet | undefined>>,
+  setForeignLanguage: React.Dispatch<React.SetStateAction<Skill | undefined>>,
+  setNativeLanguage: React.Dispatch<React.SetStateAction<Skill | undefined>>,
+  setCharFirst: React.Dispatch<React.SetStateAction<Skill[]>>,
+  setCharSecond: React.Dispatch<React.SetStateAction<Skill[]>>,
+  setSkillFirst: React.Dispatch<React.SetStateAction<Skill[]>>,
+  setSkillSecond: React.Dispatch<React.SetStateAction<Skill[]>>
 ) {
-  setForeignLanguage(
-    skills.find((skill) => skill.attributeName.includes('Foreign'))
-  );
-  setNativeLanguage(
-    skills.find((skill) => skill.attributeName.includes('Native'))
-  );
-
-  const middleChar = Math.ceil(characteristics.length / 2);
-  setCharFirst(characteristics.splice(0, middleChar));
-  setCharSecond(characteristics.splice(-middleChar));
-  const middleSkill = Math.ceil(skills.length / 2);
-  setSkillFirst(skills.splice(0, middleSkill));
-  setSkillSecond(skills.splice(-middleSkill));
+  setSheet(new Sheet(0, 0, 0, 0, 0, 0, '', '', [], [], [], []));
+  setForeignLanguage(new Skill('', 0, 0, 0));
+  setNativeLanguage(new Skill('', 0, 0, 0));
+  setCharFirst([]);
+  setCharSecond([]);
+  setSkillFirst([]);
+  setSkillSecond([]);
 }
