@@ -14,6 +14,7 @@
     "@types/react-dom": "^18.0.3",
     "axios": "^0.27.2",
     "bootstrap": "^5.1.3",
+    "env-cmd": "^10.1.0",
     "react": "^18.1.0",
     "react-bootstrap": "^2.3.1",
     "react-dom": "^18.1.0",
@@ -27,9 +28,14 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "start:stage": "env-cmd -f .env.stage react-scripts start",
+    "start:prod": "env-cmd -f .env.prod react-scripts start",
     "build": "react-scripts build",
+    "build:stage": "env-cmd -f .env.stage react-scripts build",
+    "build:prod": "env-cmd -f .env.prod react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "prod": "webpack --env.ENVIRONMENT=prod --config webpack.config.build.js"
   },
   "browserslist": {
     "production": [
