@@ -33,9 +33,10 @@
     "build": "react-scripts build",
     "build:stage": "env-cmd -f .env.stage react-scripts build",
     "build:prod": "env-cmd -f .env.prod react-scripts build",
+    "container": "npm run build:stage",
+    "deploy": "npm run build:prod",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "prod": "webpack --env.ENVIRONMENT=prod --config webpack.config.build.js"
+    "eject": "react-scripts eject"
   },
   "browserslist": {
     "production": [
