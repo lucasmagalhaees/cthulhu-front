@@ -30,6 +30,7 @@
     "start": "react-scripts start",
     "start:stage": "env-cmd -f .env.stage react-scripts start",
     "start:prod": "env-cmd -f .env.prod react-scripts start",
+    "stage": "npm run start:stage",
     "build": "react-scripts build",
     "build:stage": "env-cmd -f .env.stage react-scripts build",
     "build:prod": "env-cmd -f .env.prod react-scripts build",
