@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './components/App';
 import reportWebVitals from './reportWebVitals';
+import './custom.scss';
 
 const el = document.getElementById('root');
 if (el === null) throw new Error('Root container missing in index.html');
