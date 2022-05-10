@@ -20,7 +20,8 @@ import {
   FaUserPlus,
 } from 'react-icons/fa';
 import {
-  getRegions,
+  getForeignRegions,
+  getNativeRegions,
   getSheet,
   getSheetWithParams,
   getStereotypes,
@@ -39,7 +40,8 @@ function App() {
   const [nativeRegion, setNativeRegion] = useState<string>('');
   const [foreignRegion, setForeignRegion] = useState<string>('');
   const [stereotype, setStereotype] = useState<string>('');
-  const [regions, setRegions] = useState<Stereotype[]>();
+  const [nativeRegions, setNativeRegions] = useState<Stereotype[]>();
+  const [foreignRegions, setForeignRegions] = useState<Stereotype[]>();
   const [stereotypes, setStereotypes] = useState<Stereotype[]>();
   const [file, setFile] = useState<any>();
   const [skillFirst, setSkillFirst] = useState<Skill[]>([]);
@@ -99,8 +101,10 @@ function App() {
       )
     );
 
-    const _regions = await getRegions();
-    setRegions(_regions);
+    const _nativeRegions = await getNativeRegions();
+    setNativeRegions(_nativeRegions);
+    const _foreignRegions = await getForeignRegions();
+    setForeignRegions(_foreignRegions);
 
     const _stereotypes = await getStereotypes();
     setStereotypes(_stereotypes);
@@ -225,22 +229,21 @@ function App() {
                       <Card.Title className='text-center'>
                         Stereotypes
                       </Card.Title>
-                      <Card.Text>
-                        <Form>
-                          {stereotypes?.map((value) => (
-                            <div key={value.name} className='mb-3'>
-                              <Form.Check
-                                type='radio'
-                                onChange={(e) => handleStereotype(e.target.id)}
-                                id={value.name}
-                                value={stereotype}
-                                name='stereotype'
-                                label={value.alias}
-                              />
-                            </div>
-                          ))}
-                        </Form>
-                      </Card.Text>
+                      {stereotypes?.map((value) => (
+                        <div key={value.name} className='mb-3'>
+                          <Form.Check
+                            type='radio'
+                            onChange={(e) => handleStereotype(e.target.id)}
+                            id={value.name}
+                            value={stereotype}
+                            name='stereotype'
+                            label={value.alias}
+                          />
+                          <p className='badge-description'>
+                            {value.description}
+                          </p>
+                        </div>
+                      ))}
                     </Card.Body>
                   </Card>
                 </div>
@@ -250,24 +253,21 @@ function App() {
                       <Card.Title className='text-center'>
                         Native Region
                       </Card.Title>
-                      <Card.Text>
-                        <Form className='form-container'>
-                          {regions?.map((value) => (
-                            <div key={value.name} className='mb-3'>
-                              <Form.Check
-                                onChange={(e) =>
-                                  handleNativeRegion(e.target.id)
-                                }
-                                value={nativeRegion}
-                                type='radio'
-                                id={value.name}
-                                name='native'
-                                label={value.alias}
-                              />
-                            </div>
-                          ))}
-                        </Form>
-                      </Card.Text>
+                      {nativeRegions?.map((value) => (
+                        <div key={value.name} className='mb-3'>
+                          <Form.Check
+                            onChange={(e) => handleNativeRegion(e.target.id)}
+                            value={nativeRegion}
+                            type='radio'
+                            id={value.name}
+                            name='native'
+                            label={value.alias}
+                          />
+                          <p className='badge-description'>
+                            {value.description}
+                          </p>
+                        </div>
+                      ))}
                     </Card.Body>
                   </Card>
                 </div>
@@ -277,24 +277,21 @@ function App() {
                       <Card.Title className='text-center'>
                         Foreign Region
                       </Card.Title>
-                      <Card.Text>
-                        <Form className='form-container'>
-                          {regions?.map((value) => (
-                            <div key={value.name} className='mb-3'>
-                              <Form.Check
-                                type='radio'
-                                onChange={(e) =>
-                                  handleForeignRegion(e.target.id)
-                                }
-                                value={foreignRegion}
-                                id={value.name}
-                                name='foreign'
-                                label={value.alias}
-                              />
-                            </div>
-                          ))}
-                        </Form>
-                      </Card.Text>
+                      {foreignRegions?.map((value) => (
+                        <div key={value.name} className='mb-3'>
+                          <Form.Check
+                            type='radio'
+                            onChange={(e) => handleForeignRegion(e.target.id)}
+                            value={foreignRegion}
+                            id={value.name}
+                            name='foreign'
+                            label={value.alias}
+                          />
+                          <p className='badge-description'>
+                            {value.description}
+                          </p>
+                        </div>
+                      ))}
                     </Card.Body>
                   </Card>
                 </div>
@@ -330,7 +327,7 @@ function App() {
                 />
                 <div className='button-container mt-3'>
                   <Button
-                    variant='outline-primary'
+                    variant='outline-dark'
                     onClick={() => importFile(file)}
                   >
                     Confirm Sheet Upload
@@ -352,18 +349,6 @@ function App() {
             className='d-flex justify-content-between align-items-start'
           >
             <div className='ms-2 me-auto'>
-              <div className='fw-bold'>Age</div>
-              <FaRegCalendarAlt style={{ color: 'black' }} />
-            </div>
-            <Badge bg='primary' pill>
-              {sheet?.age}
-            </Badge>
-          </ListGroup.Item>
-          <ListGroup.Item
-            as='li'
-            className='d-flex justify-content-between align-items-start'
-          >
-            <div className='ms-2 me-auto'>
               <div className='fw-bold'>Hit Points</div>
               <FaBriefcaseMedical style={{ color: 'black' }} />
             </div>
@@ -371,6 +356,7 @@ function App() {
               {sheet?.hitPoints}
             </Badge>
           </ListGroup.Item>
+
           <ListGroup.Item
             as='li'
             className='d-flex justify-content-between align-items-start'
@@ -379,22 +365,24 @@ function App() {
               <div className='fw-bold'>Build</div>
               <FaChild style={{ color: 'black' }} />
             </div>
-            <Badge bg='success' pill>
+            <Badge bg='light' pill>
               {sheet?.build}
             </Badge>
           </ListGroup.Item>
+
           <ListGroup.Item
             as='li'
             className='d-flex justify-content-between align-items-start'
           >
             <div className='ms-2 me-auto'>
-              <div className='fw-bold'>Move Rate</div>
-              <FaRunning style={{ color: 'black' }} />
+              <div className='fw-bold'>Age</div>
+              <FaRegCalendarAlt style={{ color: 'black' }} />
             </div>
-            <Badge bg='success' pill>
-              {sheet?.movementRate}
+            <Badge bg='warning' pill>
+              {sheet?.age}
             </Badge>
           </ListGroup.Item>
+
           <ListGroup.Item
             as='li'
             className='d-flex justify-content-between align-items-start'
@@ -415,8 +403,21 @@ function App() {
               <div className='fw-bold'>Magic Points</div>
               <FaMagic style={{ color: 'black' }} />
             </div>
-            <Badge bg='danger' pill>
+            <Badge bg='secondary' pill>
               {sheet?.magicPoints}
+            </Badge>
+          </ListGroup.Item>
+
+          <ListGroup.Item
+            as='li'
+            className='d-flex justify-content-between align-items-start'
+          >
+            <div className='ms-2 me-auto'>
+              <div className='fw-bold'>Move Rate</div>
+              <FaRunning style={{ color: 'black' }} />
+            </div>
+            <Badge bg='info' pill>
+              {sheet?.movementRate}
             </Badge>
           </ListGroup.Item>
           <ListGroup.Item

@@ -22,9 +22,14 @@ export const getSheetWithParams = (
     })
     .then((res) => res.data);
 
-export const getRegions = () =>
+export const getNativeRegions = () =>
   http
-    .get<IStereotype[]>(`${baseUrl}/random-char/region`)
+    .get<IStereotype[]>(`${baseUrl}/random-char/region/native`)
+    .then((res) => res.data);
+
+export const getForeignRegions = () =>
+  http
+    .get<IStereotype[]>(`${baseUrl}/random-char/region/foreign`)
     .then((res) => res.data);
 
 export const getStereotypes = () =>

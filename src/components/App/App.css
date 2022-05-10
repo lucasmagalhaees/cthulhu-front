@@ -11,9 +11,25 @@
   box-shadow: 2px 2px 4px 4px #dddddd;
 }
 
+.badge-description {
+  background-color: rgba(var(--bs-light-rgb), var(--bs-bg-opacity)) !important;
+  color: rgba(var(--bs-dark-rgb), var(--bs-text-opacity)) !important;
+  padding: 0.35em 0.65em;
+  font-size: 0.75em;
+  font-weight: 700;
+  line-height: 1;
+  color: #fff;
+  border-radius: 0.25rem;
+}
+
 .button-container {
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
+}
+
+.orange {
+  background-color: orangered;
 }
 
 .card-container {
