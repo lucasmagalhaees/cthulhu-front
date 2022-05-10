@@ -1,3 +1,4 @@
+import { ISkill } from './skill';
 export interface ISheet {
   hitPoints: number;
   age: number;
@@ -53,31 +54,5 @@ export class Sheet implements ISheet {
     this.charFirst = charFirst;
     this.skillSecond = skillSecond;
     this.charSecond = charSecond;
-  }
-}
-
-export interface ISkill {
-  attributeName: string;
-  mainValue: number;
-  halfValue: number;
-  fifthValue: number;
-}
-
-export class Skill implements ISkill {
-  attributeName: string;
-  mainValue: number;
-  halfValue: number;
-  fifthValue: number;
-
-  constructor(
-    attributeName: string,
-    mainValue: number,
-    halfValue: number,
-    fifthValue: number
-  ) {
-    this.attributeName = attributeName;
-    this.mainValue = mainValue;
-    this.halfValue = halfValue;
-    this.fifthValue = fifthValue;
   }
 }

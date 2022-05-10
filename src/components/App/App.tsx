@@ -4,6 +4,8 @@ import {
   Accordion,
   Badge,
   Button,
+  Card,
+  Form,
   FormControl,
   FormGroup,
   ListGroup,
@@ -17,22 +19,44 @@ import {
   FaRunning,
   FaUserPlus,
 } from 'react-icons/fa';
-import { getAllProducts } from '../../services/ProductService';
-import { Sheet, Skill } from '../../usecase/sheet';
+import {
+  getRegions,
+  getSheet,
+  getSheetWithParams,
+  getStereotypes,
+} from '../../services/CharacterService';
+import { CharParams } from '../../usecase/charParams';
+import { Sheet } from '../../usecase/sheet';
+import { Skill } from '../../usecase/skill';
+import { Stereotype } from '../../usecase/stereotype';
 import Navbar from '../Navbar';
 import Container from './../../shared/Container/Container';
 import './App.css';
 
 function App() {
   const [sheet, setSheet] = useState<Sheet>();
+  const [params, setParams] = useState<CharParams>(new CharParams('', '', ''));
+  const [nativeRegion, setNativeRegion] = useState<string>('');
+  const [foreignRegion, setForeignRegion] = useState<string>('');
+  const [stereotype, setStereotype] = useState<string>('');
+  const [regions, setRegions] = useState<Stereotype[]>();
+  const [stereotypes, setStereotypes] = useState<Stereotype[]>();
   const [file, setFile] = useState<any>();
   const [skillFirst, setSkillFirst] = useState<Skill[]>([]);
   const [skillSecond, setSkillSecond] = useState<Skill[]>([]);
   const [charFirst, setCharFirst] = useState<Skill[]>([]);
   const [charSecond, setCharSecond] = useState<Skill[]>([]);
 
-  async function fetchData() {
-    const _sheet = await getAllProducts();
+  async function fetchDataWithParams() {
+    console.log(`native ${nativeRegion}`);
+    console.log(`foreign ${foreignRegion}`);
+    console.log(`steo ${stereotype}`);
+
+    const _sheet = await getSheetWithParams(
+      nativeRegion,
+      foreignRegion,
+      stereotype
+    );
     setSheet(
       new Sheet(
         _sheet?.hitPoints || 0,
@@ -49,6 +73,37 @@ function App() {
         _sheet.skillSecond
       )
     );
+
+    setSkillFirst(_sheet.skillFirst);
+    setSkillSecond(_sheet.skillSecond);
+    setCharFirst(_sheet.charFirst);
+    setCharSecond(_sheet.charSecond);
+  }
+
+  async function fetchData() {
+    const _sheet = await getSheet();
+    setSheet(
+      new Sheet(
+        _sheet?.hitPoints || 0,
+        _sheet?.age || 0,
+        _sheet?.movementRate || 0,
+        _sheet?.build || 0,
+        _sheet?.bonusDamage || 0,
+        _sheet?.magicPoints || 0,
+        _sheet?.nativeLanguage || '',
+        _sheet?.foreignLanguage || '',
+        _sheet.charFirst,
+        _sheet.charSecond,
+        _sheet.skillFirst,
+        _sheet.skillSecond
+      )
+    );
+
+    const _regions = await getRegions();
+    setRegions(_regions);
+
+    const _stereotypes = await getStereotypes();
+    setStereotypes(_stereotypes);
 
     setSkillFirst(_sheet.skillFirst);
     setSkillSecond(_sheet.skillSecond);
@@ -83,6 +138,16 @@ function App() {
     setCharFirst(_sheet.charFirst);
     setCharSecond(_sheet.charSecond);
   }
+
+  const handleStereotype = (selected: any) => {
+    setStereotype(selected);
+  };
+  const handleNativeRegion = (selected: any) => {
+    setNativeRegion(selected);
+  };
+  const handleForeignRegion = (selected: any) => {
+    setForeignRegion(selected);
+  };
 
   const importFile = async (importedSheet: any) => {
     await clearData(
@@ -147,6 +212,105 @@ function App() {
           Download Sheet
         </Button>
       </Container>
+
+      <div className='box'>
+        <Accordion>
+          <Accordion.Item eventKey='0'>
+            <Accordion.Header>Customize Sheet</Accordion.Header>
+            <Accordion.Body>
+              <div className='radio-row'>
+                <div className='radio-column'>
+                  <Card>
+                    <Card.Body>
+                      <Card.Title className='text-center'>
+                        Stereotypes
+                      </Card.Title>
+                      <Card.Text>
+                        <Form>
+                          {stereotypes?.map((value) => (
+                            <div key={value.name} className='mb-3'>
+                              <Form.Check
+                                type='radio'
+                                onChange={(e) => handleStereotype(e.target.id)}
+                                id={value.name}
+                                value={stereotype}
+                                name='stereotype'
+                                label={value.alias}
+                              />
+                            </div>
+                          ))}
+                        </Form>
+                      </Card.Text>
+                    </Card.Body>
+                  </Card>
+                </div>
+                <div className='radio-column'>
+                  <Card>
+                    <Card.Body>
+                      <Card.Title className='text-center'>
+                        Native Region
+                      </Card.Title>
+                      <Card.Text>
+                        <Form className='form-container'>
+                          {regions?.map((value) => (
+                            <div key={value.name} className='mb-3'>
+                              <Form.Check
+                                onChange={(e) =>
+                                  handleNativeRegion(e.target.id)
+                                }
+                                value={nativeRegion}
+                                type='radio'
+                                id={value.name}
+                                name='native'
+                                label={value.alias}
+                              />
+                            </div>
+                          ))}
+                        </Form>
+                      </Card.Text>
+                    </Card.Body>
+                  </Card>
+                </div>
+                <div className='radio-column'>
+                  <Card>
+                    <Card.Body>
+                      <Card.Title className='text-center'>
+                        Foreign Region
+                      </Card.Title>
+                      <Card.Text>
+                        <Form className='form-container'>
+                          {regions?.map((value) => (
+                            <div key={value.name} className='mb-3'>
+                              <Form.Check
+                                type='radio'
+                                onChange={(e) =>
+                                  handleForeignRegion(e.target.id)
+                                }
+                                value={foreignRegion}
+                                id={value.name}
+                                name='foreign'
+                                label={value.alias}
+                              />
+                            </div>
+                          ))}
+                        </Form>
+                      </Card.Text>
+                    </Card.Body>
+                  </Card>
+                </div>
+                <div className='button-container mt-3'>
+                  <Button
+                    variant='outline-success'
+                    onClick={() => fetchDataWithParams()}
+                  >
+                    Generate Sheet
+                  </Button>
+                </div>
+              </div>
+            </Accordion.Body>
+          </Accordion.Item>
+        </Accordion>
+      </div>
 
       <div className='box'>
         <Accordion>

@@ -14,13 +14,23 @@
 .button-container {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+}
+
+.card-container {
+  flex: 30%;
 }
 
 .row {
   display: flex;
 }
+.radio-row {
+  display: flex;
+  flex-direction: column;
+}
 
+.radio-column {
+  padding: 5px;
+}
 .column {
   flex: 50%;
   padding: 5px;
