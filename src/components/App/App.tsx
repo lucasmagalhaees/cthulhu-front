@@ -10,14 +10,20 @@ import {
   FormGroup,
   ListGroup,
   Table,
+  Toast,
 } from 'react-bootstrap';
 import {
   FaBriefcaseMedical,
   FaChild,
   FaMagic,
   FaRegCalendarAlt,
+  FaBug,
   FaRunning,
   FaUserPlus,
+  FaExclamationCircle,
+  FaCoins,
+  FaBrain,
+  FaBookOpen,
 } from 'react-icons/fa';
 import {
   getForeignRegions,
@@ -27,6 +33,7 @@ import {
   getStereotypes,
 } from '../../services/CharacterService';
 import { CharParams } from '../../usecase/charParams';
+import { Person } from '../../usecase/person';
 import { Sheet } from '../../usecase/sheet';
 import { Skill } from '../../usecase/skill';
 import { Stereotype } from '../../usecase/stereotype';
@@ -36,7 +43,7 @@ import './App.css';
 
 function App() {
   const [sheet, setSheet] = useState<Sheet>();
-  const [params, setParams] = useState<CharParams>(new CharParams('', '', ''));
+  const [showTooltip, setShowTooltip] = useState<boolean>(false);
   const [nativeRegion, setNativeRegion] = useState<string>('');
   const [foreignRegion, setForeignRegion] = useState<string>('');
   const [stereotype, setStereotype] = useState<string>('');
@@ -50,10 +57,6 @@ function App() {
   const [charSecond, setCharSecond] = useState<Skill[]>([]);
 
   async function fetchDataWithParams() {
-    console.log(`native ${nativeRegion}`);
-    console.log(`foreign ${foreignRegion}`);
-    console.log(`steo ${stereotype}`);
-
     const _sheet = await getSheetWithParams(
       nativeRegion,
       foreignRegion,
@@ -67,8 +70,9 @@ function App() {
         _sheet?.build || 0,
         _sheet?.bonusDamage || 0,
         _sheet?.magicPoints || 0,
-        _sheet?.nativeLanguage || '',
-        _sheet?.foreignLanguage || '',
+        _sheet.nativeLanguage,
+        _sheet.foreignLanguage,
+        _sheet.creditRating,
         _sheet.charFirst,
         _sheet.charSecond,
         _sheet.skillFirst,
@@ -92,8 +96,9 @@ function App() {
         _sheet?.build || 0,
         _sheet?.bonusDamage || 0,
         _sheet?.magicPoints || 0,
-        _sheet?.nativeLanguage || '',
-        _sheet?.foreignLanguage || '',
+        _sheet.nativeLanguage,
+        _sheet.foreignLanguage,
+        _sheet.creditRating,
         _sheet.charFirst,
         _sheet.charSecond,
         _sheet.skillFirst,
@@ -128,8 +133,9 @@ function App() {
         _sheet?.build || 0,
         _sheet?.bonusDamage || 0,
         _sheet?.magicPoints || 0,
-        _sheet?.nativeLanguage || '',
-        _sheet?.foreignLanguage || '',
+        _sheet.nativeLanguage,
+        _sheet.foreignLanguage,
+        _sheet.creditRating,
         _sheet.charFirst,
         _sheet.charSecond,
         _sheet.skillFirst,
@@ -163,10 +169,10 @@ function App() {
     );
     try {
       const _sheet: Sheet = JSON.parse(importedSheet);
-      console.log(_sheet);
 
       await fillData(_sheet);
     } catch (e) {
+      setShowTooltip(true);
       console.log('An error on casting object has occurred', e);
     }
   };
@@ -179,8 +185,9 @@ function App() {
       sheet?.build || 0,
       sheet?.bonusDamage || 0,
       sheet?.magicPoints || 0,
-      sheet?.nativeLanguage || '',
-      sheet?.foreignLanguage || '',
+      sheet?.nativeLanguage || new Person('', '', 0),
+      sheet?.foreignLanguage || new Person('', '', 0),
+      sheet?.creditRating || new Person('', '', 0),
       charFirst,
       charSecond,
       skillFirst,
@@ -300,7 +307,7 @@ function App() {
                     variant='outline-success'
                     onClick={() => fetchDataWithParams()}
                   >
-                    Generate Sheet
+                    Customize
                   </Button>
                 </div>
               </div>
@@ -325,9 +332,30 @@ function App() {
                   onChange={(e) => setFile(e.target.value)}
                   type='text'
                 />
+                <Toast
+                  show={showTooltip}
+                  onClose={() => setShowTooltip(false)}
+                  className='d-inline-block ml-1 mb-1 mr-1 mt-3'
+                  bg='warning'
+                >
+                  <Toast.Header>
+                    <img
+                      src='holder.js/20x20?text=%20'
+                      className='rounded me-2'
+                      alt=''
+                    />
+                    <strong className='me-auto text-warning'>
+                      <FaExclamationCircle style={{ marginRight: 7 }} />
+                      Error
+                    </strong>
+                  </Toast.Header>
+                  <Toast.Body className='text-white'>
+                    The sheet you submitted is invalid
+                  </Toast.Body>
+                </Toast>
                 <div className='button-container mt-3'>
                   <Button
-                    variant='outline-dark'
+                    variant='outline-info'
                     onClick={() => importFile(file)}
                   >
                     Confirm Sheet Upload
@@ -378,8 +406,21 @@ function App() {
               <div className='fw-bold'>Age</div>
               <FaRegCalendarAlt style={{ color: 'black' }} />
             </div>
-            <Badge bg='warning' pill>
+            <Badge bg='info' pill>
               {sheet?.age}
+            </Badge>
+          </ListGroup.Item>
+
+          <ListGroup.Item
+            as='li'
+            className='d-flex justify-content-between align-items-start'
+          >
+            <div className='ms-2 me-auto'>
+              <div className='fw-bold'>Move Rate</div>
+              <FaRunning style={{ color: 'black' }} />
+            </div>
+            <Badge bg='secondary' pill>
+              {sheet?.movementRate}
             </Badge>
           </ListGroup.Item>
 
@@ -403,7 +444,7 @@ function App() {
               <div className='fw-bold'>Magic Points</div>
               <FaMagic style={{ color: 'black' }} />
             </div>
-            <Badge bg='secondary' pill>
+            <Badge bg='danger' pill>
               {sheet?.magicPoints}
             </Badge>
           </ListGroup.Item>
@@ -413,11 +454,12 @@ function App() {
             className='d-flex justify-content-between align-items-start'
           >
             <div className='ms-2 me-auto'>
-              <div className='fw-bold'>Move Rate</div>
-              <FaRunning style={{ color: 'black' }} />
+              <div className='fw-bold'>Native Language</div>
+              <FaBrain style={{ marginRight: 7 }} />
+              {sheet?.nativeLanguage.detail}
             </div>
-            <Badge bg='info' pill>
-              {sheet?.movementRate}
+            <Badge bg='warning' pill>
+              {sheet?.nativeLanguage.value}
             </Badge>
           </ListGroup.Item>
           <ListGroup.Item
@@ -425,18 +467,26 @@ function App() {
             className='d-flex justify-content-between align-items-start'
           >
             <div className='ms-2 me-auto'>
-              <div className='fw-bold'>Native Language</div>
-              {sheet?.nativeLanguage}
+              <div className='fw-bold'>Foreign Language</div>
+              <FaBookOpen style={{ marginRight: 7 }} />
+              {sheet?.foreignLanguage.detail}
             </div>
+            <Badge bg='warning' pill>
+              {sheet?.foreignLanguage.value}
+            </Badge>
           </ListGroup.Item>
           <ListGroup.Item
             as='li'
             className='d-flex justify-content-between align-items-start'
           >
             <div className='ms-2 me-auto'>
-              <div className='fw-bold'>Foreign Language</div>
-              {sheet?.foreignLanguage}
+              <div className='fw-bold'>Credit Rating</div>
+              <FaCoins style={{ marginRight: 7 }} />
+              {sheet?.creditRating.detail}
             </div>
+            <Badge bg='dark' pill>
+              {sheet?.creditRating.value}
+            </Badge>
           </ListGroup.Item>
         </ListGroup>
       </Container>
@@ -547,7 +597,23 @@ async function clearData(
   setSkillFirst: React.Dispatch<React.SetStateAction<Skill[]>>,
   setSkillSecond: React.Dispatch<React.SetStateAction<Skill[]>>
 ) {
-  setSheet(new Sheet(0, 0, 0, 0, 0, 0, '', '', [], [], [], []));
+  setSheet(
+    new Sheet(
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      new Person('', '', 0),
+      new Person('', '', 0),
+      new Person('', '', 0),
+      [],
+      [],
+      [],
+      []
+    )
+  );
   setCharFirst([]);
   setCharSecond([]);
   setSkillFirst([]);
