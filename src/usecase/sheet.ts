@@ -1,4 +1,5 @@
 import { ISkill } from './skill';
+import { IPerson } from './person';
 export interface ISheet {
   hitPoints: number;
   age: number;
@@ -6,8 +7,9 @@ export interface ISheet {
   build: number;
   bonusDamage: number;
   magicPoints: number;
-  nativeLanguage: string;
-  foreignLanguage: string;
+  nativeLanguage: IPerson;
+  foreignLanguage: IPerson;
+  creditRating: IPerson;
   skillFirst: ISkill[];
   skillSecond: ISkill[];
   charFirst: ISkill[];
@@ -21,8 +23,9 @@ export class Sheet implements ISheet {
   build: number;
   bonusDamage: number;
   magicPoints: number;
-  nativeLanguage: string;
-  foreignLanguage: string;
+  nativeLanguage: IPerson;
+  foreignLanguage: IPerson;
+  creditRating: IPerson;
   skillFirst: ISkill[];
   skillSecond: ISkill[];
   charFirst: ISkill[];
@@ -35,8 +38,9 @@ export class Sheet implements ISheet {
     build: number,
     bonusDamage: number,
     magicPoints: number,
-    nativeLanguage: string,
-    foreignLanguage: string,
+    nativeLanguage: IPerson,
+    foreignLanguage: IPerson,
+    creditRating: IPerson,
     charFirst: ISkill[],
     charSecond: ISkill[],
     skillFirst: ISkill[],
@@ -50,6 +54,7 @@ export class Sheet implements ISheet {
     this.magicPoints = magicPoints;
     this.nativeLanguage = nativeLanguage;
     this.foreignLanguage = foreignLanguage;
+    this.creditRating = creditRating;
     this.skillFirst = skillFirst;
     this.charFirst = charFirst;
     this.skillSecond = skillSecond;

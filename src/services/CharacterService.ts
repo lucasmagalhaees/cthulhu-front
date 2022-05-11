@@ -1,7 +1,6 @@
-import http from '../utils/http';
 import { ISheet } from '../usecase/sheet';
+import http from '../utils/http';
 import { IStereotype } from './../usecase/stereotype';
-import { CharParams } from '../usecase/charParams';
 
 const baseUrl = process.env.REACT_APP_BASE_URL;
 
