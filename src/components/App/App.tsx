@@ -11,6 +11,7 @@ import {
   ListGroup,
   Table,
   Toast,
+  useAccordionButton,
 } from 'react-bootstrap';
 import {
   FaBriefcaseMedical,
@@ -194,7 +195,7 @@ function App() {
       skillSecond
     );
 
-    const fileName = `Char_${sheet?.nativeLanguage}_${sheet?.foreignLanguage}`;
+    const fileName = `Char_${sheet?.nativeLanguage.detail}_${sheet?.foreignLanguage.detail}`;
     const json = JSON.stringify(myData);
 
     const blob = new Blob([json], { type: 'application/json' });
@@ -334,6 +335,8 @@ function App() {
                 />
                 <Toast
                   show={showTooltip}
+                  autohide
+                  delay={3500}
                   onClose={() => setShowTooltip(false)}
                   className='d-inline-block ml-1 mb-1 mr-1 mt-3'
                   bg='warning'
@@ -349,9 +352,7 @@ function App() {
                       Error
                     </strong>
                   </Toast.Header>
-                  <Toast.Body className='text-white'>
-                    The sheet you submitted is invalid
-                  </Toast.Body>
+                  <Toast.Body className='text-white'>Invalid sheet!</Toast.Body>
                 </Toast>
                 <div className='button-container mt-3'>
                   <Button
