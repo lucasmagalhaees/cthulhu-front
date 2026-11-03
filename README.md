@@ -91,3 +91,9 @@ details
   - Hat tip to anyone whose code is used
   - Inspiration
   - etc
+
+## Deploy na Vercel
+
+1. Suba antes o back (`cthulhu-caracter-sheet`) e anote a URL dele.
+2. Na Vercel: **Add New → Project**, importe este repositório (o `vercel.json` já diz como construir).
+3. Em **Settings → Environment Variables**, crie `REACT_APP_BASE_URL` = `https://<back>.vercel.app/char-generator` e faça um novo deploy (o Create React App lê a variável na hora do build).
