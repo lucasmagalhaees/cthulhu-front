@@ -2,7 +2,10 @@ import { ISheet } from '../usecase/sheet';
 import http from '../utils/http';
 import { IStereotype } from './../usecase/stereotype';
 
-const baseUrl = process.env.REACT_APP_BASE_URL;
+// The sheet API (cthulhu-char-golang); REACT_APP_BASE_URL overrides it, e.g. a local server
+const baseUrl =
+  process.env.REACT_APP_BASE_URL ||
+  'https://cthulhu-char-golang.vercel.app/char-generator';
 
 export const getSheet = () =>
   http.get<ISheet>(`${baseUrl}/random-char`).then((res) => res.data);
