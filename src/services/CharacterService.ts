@@ -4,7 +4,7 @@ import { IStereotype } from './../usecase/stereotype';
 
 // The sheet API (cthulhu-char-golang); REACT_APP_BASE_URL overrides it, e.g. a local server
 const baseUrl =
-  process.env.REACT_APP_BASE_URL ||
+  import.meta.env.REACT_APP_BASE_URL ||
   'https://cthulhu-char-golang.vercel.app/char-generator';
 
 export const getSheet = () =>
